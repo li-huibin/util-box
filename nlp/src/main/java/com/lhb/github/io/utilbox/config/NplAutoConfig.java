@@ -13,6 +13,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 
+/**
+ * 全局配置
+ *
+ * @author lihuibin
+ */
 @Configuration
 @ConditionalOnWebApplication
 @EnableConfigurationProperties(value = {NlpProperties.class, SensitiveWordProperties.class})
@@ -22,6 +27,11 @@ public class NplAutoConfig {
     @Autowired
     SensitiveWordProperties sensitiveWordProperties;
 
+    /**
+     * 设置切点表达式和切点通知处理器
+     *
+     * @return 返回Spring AOP Advisor的包装类{@link AspectJExpressionPointcutAdvisor}
+     */
     @Bean
     @ConditionalOnProperty(name = "nlp.sensitive-word.point-cut")
     public AspectJExpressionPointcutAdvisor advice() {
@@ -31,6 +41,11 @@ public class NplAutoConfig {
         return advisor;
     }
 
+    /**
+     * 初始化注解拦截器
+     *
+     * @return 返回注解处理类 {@link SensitiveAnnotationInterceptor}
+     */
     @Bean
     public SensitiveAnnotationInterceptor interceptor() {
         SensitiveAnnotationInterceptor interceptor = new SensitiveAnnotationInterceptor();
@@ -38,8 +53,13 @@ public class NplAutoConfig {
         return interceptor;
     }
 
+    /**
+     * 初始化敏感词处理类，敏感词处理逻辑在此处理类 {@link SensitiveWordHandler}中实现
+     *
+     * @return 返回敏感词处理类 {@link SensitiveWordHandler}
+     */
     @Bean
     public SensitiveWordHandler sensitiveWordHandler() {
-        return new SensitiveWordHandler(sensitiveWordProperties,nlpProperties);
+        return new SensitiveWordHandler(sensitiveWordProperties, nlpProperties);
     }
 }
